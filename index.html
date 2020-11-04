@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+</head>
+<body>
+  <button onclick="window.startCall()">Start Call</button>
+  <button onclick="window.answerCall()">Open Call</button>
+  <video id='my' style="width: 600px; height: 600px;" autoplay></video>
+  <video id='remote' style="width: 600px; height: 600px;" autoplay></video>
+    We are using node <script>document.write(process.versions.node)</script>,
+    Chrome <script>document.write(process.versions.chrome)</script>,
+    and Electron <script>document.write(process.versions.electron)</script>.
+    <script>
+      const constraints = window.constraints = {
+        audio: true,
+        video: true
+      };
+      const { peerjs: {Peer}} = require("peerjs")
+      console.log(Peer, "PEER")
+      const peer = new Peer("binariksdemowithwebrtc3000");
+      peer.on('open', (id) => {
+        console.log('My peer ID is: ' + id);
+      });
+      const myVideoElement = document.getElementById('my');
+      const remoteVideoElement = document.getElementById('remote')
+      // var call = peer.call('binariksdemowithwebrtc3000',
+      //   mediaStream);
+      const startCall = () => {
+        navigator.mediaDevices.getUserMedia(constraints).then(function(myStream) {
+          const call = peer.call('binariksdemowithwebrtc3000', myStream);
+          myVideoElement.srcObject= myStream;
+          call.on(
+            'stream', function(remoteStream) {
+              remoteVideoElement.srcObject = remoteStream;
+          });
+        })
+      }
+      window.startCall = startCall;
+      peer.on('call', function(call) {
+      navigator.mediaDevices.getUserMedia({video: true, audio: true}, function(stream) {
+        call.answer(stream); // Answer the call with an A/V stream.
+        call.on('stream', function(remoteStream) {
+          console.log('here we go')
+          remoteVideoElement.srcObject = remoteStream;
+        });
+      }, function(err) {
+        console.log('Failed to get local stream' ,err);
+      });
+      });
+
+      const answerCall = () => {
+      }
+      window.answerCall = answerCall;
+
+      const path = './recordings/saved.mp4'
+      navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
+      const recorder = new MediaRecorder(stream);
+      recorder.start(1000)
+      const blob_reader = new FileReader();
+      // window.stream = stream;
+      // myVideoElement.srcObject = stream;
+      const storage_stream = require("fs").createWriteStream(path);
+      const blobs = [];
+      blob_reader.addEventListener("load", function(ev) {
+          storage_stream.write(Buffer.from(ev.currentTarget.result));
+          if(blobs.length) {
+              ev.currentTarget.readAsArrayBuffer(blobs.shift());
+          }
+      });
+      recorder.addEventListener("dataavailable", function(ev) {
+          if(blob_reader.readyState != 1) {
+              blob_reader.readAsArrayBuffer(ev.data);
+          } else {
+              blobs.push(ev.data);
+          }
+          });
+        });
+    </script>
+</body>
+</html>
