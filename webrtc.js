@@ -8,18 +8,14 @@ const constraints = window.constraints = {
   video: true
 };
 
-const peer = new Peer('bin1', {
-  host: 'localhost',
-  port: 9000,
-  path: './webrtctrain'
-});
+const peer = new Peer('binnn1');
 peer.on('open', (id) => {
   console.log(peer.id + 'open with ID: ' + id);
 });
 
 const startCall = () => {
   navigator.mediaDevices.getUserMedia(constraints).then(function(myStream) {
-    const call = peer.call('bin1', myStream);
+    const call = peer.call('binnn1', myStream);
     myVideoElement.srcObject = myStream;
     call.on(
       'stream', function(remoteStream) {
