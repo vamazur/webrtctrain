@@ -1,9 +1,6 @@
-const { app, BrowserWindow } = require('electron')
-const url = require('url')
-const path = require('path')
+const { app, BrowserWindow } = require('electron');
 
 let mainWindow;
-
 
 function createWindow () {
   mainWindow = new BrowserWindow({
@@ -13,26 +10,21 @@ function createWindow () {
       nodeIntegration: true
     }
   });
-  // mainWindow.loadURL(url.format({
-  //   pathname: path.join(__dirname, 'index.html'),
-  //   protocol: 'file:',
-  //   slashes: true
-  // }))
 
-  mainWindow.loadFile('index.html')
-  mainWindow.webContents.openDevTools()
+  mainWindow.loadFile('index.html');
+  mainWindow.webContents.openDevTools();
 }
 
-app.whenReady().then(createWindow)
+app.whenReady().then(createWindow);
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
-    app.quit()
+    app.quit();
   }
 })
 
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow()
+    createWindow();
   }
 })
