@@ -4,7 +4,6 @@ const path = require('path')
 
 let mainWindow;
 
-app.setPath("userData", __dirname + "/saved_recordings")
 
 function createWindow () {
   mainWindow = new BrowserWindow({
@@ -14,11 +13,11 @@ function createWindow () {
       nodeIntegration: true
     }
   });
-  mainWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'index.html'),
-    protocol: 'file:',
-    slashes: true
-  }))
+  // mainWindow.loadURL(url.format({
+  //   pathname: path.join(__dirname, 'index.html'),
+  //   protocol: 'file:',
+  //   slashes: true
+  // }))
 
   mainWindow.loadFile('index.html')
   mainWindow.webContents.openDevTools()
