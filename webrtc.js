@@ -8,37 +8,41 @@ const constraints = window.constraints = {
   video: true
 };
 
-const peer = new Peer('binnn1');
+const peer = new Peer('bin122', {
+  host: '192.168.1.15',
+  port: 9000,
+  path: './webrtctrain'
+});
 peer.on('open', (id) => {
   console.log(peer.id + 'open with ID: ' + id);
 });
 
 const startCall = () => {
-  navigator.mediaDevices.getUserMedia(constraints).then(function(myStream) {
-    const call = peer.call('binnn1', myStream);
+  navigator.mediaDevices.getUserMedia(constraints).then((myStream) => {
+    const call = peer.call('bin12', myStream);
     myVideoElement.srcObject = myStream;
     call.on(
       'stream', function(remoteStream) {
         console.log(peer, call, myStream)
         remoteVideoElement.srcObject = remoteStream;
     });
-  });
+  }, err => console.log(err));
 };
 window.startCall = startCall;
 
 peer.on('error', (err) => console.log(err, 'ERR'));
 
-peer.on('call', (call) =>  {
-  navigator.mediaDevices.getUserMedia(constraints).then(function(myStream) {
-    console.log(peer,call, 'setItemPEER')
-    console.log('hereitis', remoteVideoElement)
-    call.answer(myStream);
-    call.on(
-      'stream', function(remoteStream) {
-        remoteVideoElement.srcObject = remoteStream;
-    });
-  });
-});
+// peer.on('call', (call) =>  {
+//   navigator.mediaDevices.getUserMedia(constraints).then(function(myStream) {
+//     console.log(peer,call, 'setItemPEER')
+//     console.log('hereitis', remoteVideoElement)
+//     call.answer(myStream);
+//     call.on(
+//       'stream', function(remoteStream) {
+//         remoteVideoElement.srcObject = remoteStream;
+//     });
+//   });
+// });
 
 
 const path = './recordings/saved.mp4';
